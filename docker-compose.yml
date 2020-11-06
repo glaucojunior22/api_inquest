@@ -9,6 +9,13 @@ services:
     volumes:
       - .:/usr/src/app
     command: python manage.py runserver 0.0.0.0:8000
+    depends_on: 
+      - migration
+  migration:
+    image: 3.9-alpine
+    command: python manage.py migrate --noinput
+    volumes:
+      - .:/usr/src/app
         
 
 
