@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  web:
+    image: 3.9-alpine
+    build: .
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/usr/src/app
+    command: python manage.py runserver 0.0.0.0:8000
+        
+
+
+# services:
+#     python:
+#         # image: python:3.4.3
+#         image: execdriver:1.0
+#         volumes:
+#             - ./executive_drivers2_backend:/app
+#             - ./google_token:/opt/gsystem_management/media/google_token
+#         ports:
+#             - 8000:8000
+#         command: bash -c "python manage.py runserver 0.0.0.0:8000"
+        # command: bash -c "pip install pip==19.1.1 && cd ./executive_drivers2_backend && pip install -r requirements.txt && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    # postgres:
+    #     image: postgres:10-alpine
+    #     ports:
+    #         - 5432:5432
+    #     environment:
+    #         POSTGRES_USER: 'executive_dj2'
+    #         POSTGRES_PASSWORD: 'exec_&d2'
+    #         POSTGRES_DB: 'executive_drivers_django2'
+
+
+# db:
+#     image: postgres
+# web:
+#     build: .
+#     command: python manage.py runserver 0.0.0.0:8000
+#     volumes:
+#         - .:/executive_drivers2_backend
+#     ports:
+#         - "8000:8000"
+#     links:
+#         - db
