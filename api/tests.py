@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -105,5 +106,65 @@ class TestEnterpriseAPI(TestCase):
     def test_enterprise_delete(self):
         response = self.client.delete(
             reverse('api:enterprise-detail', args=[self.enterprise.pk])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestPossessionAPI(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.person = Person.objects.create(
+            name='Juliana', cpf='999.999.999-99', birthday='1999-05-10'
+        )
+        self.possession = Possession.objects.create(
+            name='Veículo',
+            value=Decimal('50.000'), 
+            description='Volkswagen Fusca Preto',
+            owner=self.person
+        )
+        self.new_possession = {
+            'name': 'Imóvel',
+            'value': '100.000', 
+            'description': 'Imóvel situado à Avenida Bandeirantes, 100',
+            'owner': self.person.pk
+        }
+        self.possession_update = {
+            'name': 'Veículo',
+            'value': '51.999', 
+            'description': 'Volkswagen Fusca Preto',
+            'owner': self.person.pk
+        }
+    
+    
+    def test_possession_list(self):
+        response = self.client.get(reverse('api:possession-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_possession_create(self):
+        response = self.client.post(
+            reverse('api:possession-list'), self.new_possession
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Possession.objects.count(), 2)
+        self.assertEqual(
+            Possession.objects.get(id=2).name, self.new_possession['name']
+        )
+    
+    def test_possession_post_bad_request(self):
+        response = self.client.post(reverse('api:possession-list'))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_possession_update(self):
+        response = self.client.put(
+            reverse('api:possession-detail', args=[self.possession.pk]),
+            self.possession_update
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], self.possession_update['name'])
+
+    def test_possession_delete(self):
+        response = self.client.delete(
+            reverse('api:possession-detail', args=[self.possession.pk])
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
