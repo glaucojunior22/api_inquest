@@ -15,7 +15,7 @@ class PossessionSerializer(serializers.ModelSerializer):
     value = serializers.DecimalField(
         max_digits=10, decimal_places=2, localize=True
     )
-    nome_propietario = serializers.SerializerMethodField()
+    nome_proprietario = serializers.SerializerMethodField()
 
 
     def get_nome_proprietario(self, obj):

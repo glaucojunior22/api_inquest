@@ -15,5 +15,5 @@ class EnterpriseViewSet(viewsets.ModelViewSet):
 
 
 class PossessionViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.EnterpriseSerializer
+    serializer_class = serializers.PossessionSerializer
     queryset = Possession.objects.all()
