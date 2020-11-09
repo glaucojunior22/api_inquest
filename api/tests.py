@@ -50,3 +50,60 @@ class TestPersonAPI(TestCase):
             reverse('api:person-detail', args=[self.person.pk])
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestEnterpriseAPI(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.enterprise = Enterprise.objects.create(
+            name='ACME LTDA',
+            owner_document='000.000.000-00', 
+            fantasy_name='ACME',
+            address='Rua das casas, 100'
+        )
+        self.new_enterprise = {
+            'name': 'XPTO INC.',
+            'owner_document': '000.000.000-00', 
+            'fantasy_name': 'XPTO',
+            'address': 'Rua das casas, 100'
+        }
+        self.enterprise_update = {
+            'name': 'ACME LTDA',
+            'owner_document': '99.999.999/9999-99', 
+            'fantasy_name': 'ACME',
+            'address': 'Rua das casas, 100'
+        }
+    
+    
+    def test_enterprise_list(self):
+        response = self.client.get(reverse('api:enterprise-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_enterprise_create(self):
+        response = self.client.post(
+            reverse('api:enterprise-list'), self.new_enterprise
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Enterprise.objects.count(), 2)
+        self.assertEqual(
+            Enterprise.objects.get(id=2).name, self.new_enterprise['name']
+        )
+    
+    def test_enterprise_post_bad_request(self):
+        response = self.client.post(reverse('api:enterprise-list'))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def test_enterprise_update(self):
+        response = self.client.put(
+            reverse('api:enterprise-detail', args=[self.enterprise.pk]),
+            self.enterprise_update
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], self.enterprise_update['name'])
+
+    def test_enterprise_delete(self):
+        response = self.client.delete(
+            reverse('api:enterprise-detail', args=[self.enterprise.pk])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
